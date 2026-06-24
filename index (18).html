@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zone Touch 10-in-1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:#060910;color:#C8D0DC;font-family:'JetBrains Mono',monospace;font-size:13px;}
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* sidebar */
+.sb{width:244px;min-width:244px;background:#07090E;border-right:1px solid #111827;display:flex;flex-direction:column;overflow:hidden;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+.logo{padding:15px 14px;border-bottom:1px solid #111827;display:flex;align-items:center;gap:10px;}
+.logo-orb{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#A78BFA,#EC4899);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;box-shadow:0 0 14px rgba(167,139,250,.25);}
+.logo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#E8EDF3;}
+.logo-tag{margin-left:auto;font-size:10px;background:#111827;color:#3C4A5C;padding:2px 7px;border-radius:5px;font-family:'Space Grotesk',sans-serif;border:1px solid #1A2535;}
+
+.acct{padding:12px 14px;border-bottom:1px solid #111827;}
+.arow{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
+.adot{width:8px;height:8px;border-radius:50%;background:#1E2A38;transition:all .3s;}
+.adot.on{background:#22C55E;box-shadow:0 0 7px #22C55E;}
+.albl{font-size:11px;color:#6B7A8D;font-family:'Space Grotesk',sans-serif;font-weight:500;}
+.abal{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:#E8EDF3;margin:3px 0 1px 16px;min-height:22px;}
+.aid{font-size:10px;color:#2C3A4A;margin:0 0 9px 16px;min-height:13px;}
+.tinp{width:100%;background:#0C1220;border:1px solid #192030;color:#C8D0DC;font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 10px;border-radius:7px;margin-bottom:6px;outline:none;}
+.tinp:focus{border-color:#A78BFA;}
+.btn-conn{width:100%;background:#A78BFA;color:#0D0520;border:none;border-radius:7px;padding:9px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.btn-conn:disabled{opacity:.4;cursor:not-allowed;}
+
+.slist{flex:1;overflow-y:auto;padding:6px;}
+.si{display:flex;align-items:center;padding:9px 10px;border-radius:9px;cursor:pointer;margin-bottom:2px;gap:8px;border:1px solid transparent;transition:background .1s,border-color .1s;}
+.si:hover{background:#0C1220;}.si.active{background:#0C1220;border-color:#192030;}
+.sinum{width:22px;height:22px;border-radius:7px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#4B5A6C;flex-shrink:0;}
+.sinum.on{background:rgba(167,139,250,.15);color:#A78BFA;}
+.simeta{flex:1;min-width:0;}
+.sisym{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12px;color:#D4DAE4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sisub{font-size:10px;color:#2C3A4A;margin-top:2px;}
+.siright{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.sdot{width:7px;height:7px;border-radius:50%;background:#1E2A38;}
+.sdot.on{background:#22C55E;box-shadow:0 0 5px #22C55E;animation:pulse 1.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.spl{font-size:10px;font-weight:600;font-family:'Space Grotesk',sans-serif;}
+.cg{color:#22C55E;}.cr{color:#EF4444;}.cm{color:#2C3A4A;}
+
+.sbfoot{padding:10px 12px;border-top:1px solid #111827;}
+.btn-stopall{width:100%;background:transparent;color:#EF4444;border:1px solid #2A1515;border-radius:7px;padding:8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12px;cursor:pointer;}
+.btn-stopall:hover{background:#150808;}
+
+/* welcome */
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.wi{font-size:56px;opacity:.18;}
+.wt{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;color:#1A2230;}
+.ws{color:#131C28;font-size:13px;}
+
+/* dashboard */
+.dash{display:flex;flex-direction:column;flex:1;overflow:hidden;}
+
+.hdr{padding:13px 22px;border-bottom:1px solid #111827;display:flex;align-items:center;gap:12px;flex-shrink:0;background:#07090E;}
+.hdr-num{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;flex-shrink:0;}
+.hdr-info{flex:1;min-width:0;}
+.hdr-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;color:#E8EDF3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hdr-meta{font-size:11px;color:#4B5A6C;margin-top:2px;}
+.badge{font-size:11px;padding:4px 12px;border-radius:20px;font-family:'Space Grotesk',sans-serif;font-weight:600;white-space:nowrap;}
+.badge.stp{background:rgba(30,42,56,.4);color:#3C4A5C;border:1px solid #192030;}
+.badge.mon{background:rgba(34,197,94,.1);color:#22C55E;border:1px solid rgba(34,197,94,.22);}
+.badge.warm{background:rgba(251,146,60,.1);color:#FB923C;border:1px solid rgba(251,146,60,.22);}
+.badge.con{background:rgba(59,130,246,.1);color:#3B82F6;border:1px solid rgba(59,130,246,.22);}
+.badge.trd{background:rgba(167,139,250,.1);color:#A78BFA;border:1px solid rgba(167,139,250,.22);}
+.hbtns{display:flex;gap:8px;flex-shrink:0;}
+.btn-start{background:#A78BFA;color:#0D0520;border:none;border-radius:8px;padding:9px 20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;}
+.btn-stop{background:transparent;color:#EF4444;border:1px solid #EF4444;border-radius:8px;padding:9px 20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.btn-stop:disabled{opacity:.4;cursor:not-allowed;}
+
+.sbar{display:grid;grid-template-columns:repeat(5,1fr);flex-shrink:0;border-bottom:1px solid #111827;}
+.sc{padding:12px 16px;border-right:1px solid #111827;background:#07090E;}.sc:last-child{border-right:none;}
+.sl{font-size:10px;color:#2C3A4A;text-transform:uppercase;letter-spacing:1px;font-family:'Space Grotesk',sans-serif;margin-bottom:4px;}
+.sv{font-size:22px;font-weight:700;color:#E8EDF3;font-family:'Space Grotesk',sans-serif;letter-spacing:-.5px;}
+.sv.g{color:#22C55E;}.sv.r{color:#EF4444;}
+
+.cgrid{flex:1;overflow:hidden;display:grid;grid-template-columns:310px 1fr;grid-template-rows:1fr 188px;}
+
+/* settings panel */
+.setp{grid-column:1;grid-row:1;border-right:1px solid #111827;overflow-y:auto;padding:14px 16px;background:#07090E;}
+.ph{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1.3px;color:#2C3A4A;margin-bottom:11px;}
+.f{margin-bottom:10px;}
+.f label{display:block;font-size:11px;color:#4B5A6C;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;}
+.f input,.f select{width:100%;background:#0C1220;border:1px solid #192030;color:#C8D0DC;font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;transition:border-color .15s;}
+.f input:focus,.f select:focus{border-color:#A78BFA;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.row3{display:grid;grid-template-columns:1fr 82px;gap:6px;}
+.hr{height:1px;background:#111827;margin:12px 0;}
+
+/* pills */
+.pills{display:flex;gap:4px;}
+.pill{flex:1;padding:8px 4px;background:#0C1220;border:1px solid #192030;color:#4B5A6C;border-radius:7px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:11px;text-align:center;line-height:1.4;transition:all .12s;}
+.pill.on{background:rgba(167,139,250,.1);color:#A78BFA;border-color:#A78BFA;}
+.pill-sub{font-size:9px;font-weight:400;color:#2C3A4A;margin-top:2px;}
+
+/* filter pills */
+.fpill{flex:1;padding:9px 4px;background:#0C1220;border:1px solid #192030;color:#4B5A6C;border-radius:7px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:11px;text-align:center;line-height:1.4;transition:all .12s;}
+.fpill.fn{background:rgba(75,90,108,.12);color:#8897A8;border-color:#4B5A6C;}
+.fpill.fm{background:rgba(251,146,60,.1);color:#FB923C;border-color:#FB923C;}
+.fpill.ft{background:rgba(34,197,94,.1);color:#22C55E;border-color:#22C55E;}
+
+/* filter sub-box */
+.fbox{background:#0A1018;border:1px solid #192030;border-radius:8px;padding:12px;margin-top:10px;}
+.fbox-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.fbox-title.m{color:#FB923C;}.fbox-title.t{color:#22C55E;}
+
+/* save */
+.btn-save{width:100%;background:#A78BFA;color:#0D0520;border:none;border-radius:8px;padding:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;margin-top:8px;}
+.smsg{text-align:center;font-size:11px;color:#A78BFA;margin-top:6px;height:15px;transition:opacity .3s;}
+
+/* log */
+.logp{grid-column:2;grid-row:1;overflow:hidden;display:flex;flex-direction:column;padding:14px 16px;}
+.logbox{flex:1;overflow-y:auto;font-size:12px;line-height:1.7;}
+.le{color:#2C3A4A;white-space:pre-wrap;word-break:break-word;}
+.le .ts{color:#1A2535;margin-right:6px;}
+.le.ok{color:#C8D0DC;}.le.win{color:#22C55E;}.le.loss{color:#EF4444;}.le.err{color:#FB923C;}
+
+/* history */
+.histp{grid-column:1/-1;grid-row:2;border-top:1px solid #111827;overflow-y:auto;background:#07090E;}
+.histhdr{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1.3px;color:#2C3A4A;padding:10px 18px 8px;position:sticky;top:0;background:#07090E;border-bottom:1px solid #0E1520;z-index:1;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;color:#2C3A4A;font-weight:500;text-align:left;padding:7px 14px;text-transform:uppercase;letter-spacing:.8px;}
+td{padding:7px 14px;border-top:1px solid #0C1220;font-size:12px;color:#6B7A8D;}
+.tw{color:#22C55E;font-weight:600;}.tl{color:#EF4444;font-weight:600;}
+.emp{padding:20px 18px;color:#1A2535;font-size:12px;}
+
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#192030;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sb">
+  <div class="logo">
+    <div class="logo-orb">🎯</div>
+    <span class="logo-name">Zone Touch</span>
+    <span class="logo-tag">10-in-1</span>
+  </div>
+
+  <div class="acct">
+    <div class="arow"><div class="adot" id="adot"></div><span class="albl" id="albl">Not connected</span></div>
+    <div class="abal" id="abal"></div>
+    <div class="aid"  id="aid"></div>
+    <input type="password" class="tinp" id="tinp" placeholder="Paste API token…">
+    <button class="btn-conn" id="bcn" onclick="doConnect()">Connect</button>
+  </div>
+
+  <div class="slist" id="slist"></div>
+
+  <div class="sbfoot">
+    <button class="btn-stopall" onclick="doStopAll()">■ Stop All Markets</button>
+  </div>
+</aside>
+
+<main class="main" id="main">
+  <div class="welcome">
+    <div class="wi">🎯</div>
+    <div class="wt">Zone Touch 10-in-1</div>
+    <div class="ws">Select a market from the sidebar</div>
+  </div>
+</main>
+
+</div>
+<script>
+const LOGIC_NAMES = ['Zone Touch', 'Reversal Touch', 'Reversal Any'];
+const COLORS = ['#A78BFA','#22C55E','#3B82F6','#F59E0B','#EC4899','#06B6D4','#84CC16','#FB923C','#EF4444','#8B5CF6'];
+
+let cur = null;   // current slot id
+let syms = [];    // symbol list
+let state = {};   // slotId -> snap
+// temp picks (before save)
+let tLogic = null, tMode = null, tFilter = null;
+
+// ── account ───────────────────────────────────────────────────────────────────
+function showAcct(info) {
+  G('adot').className = 'adot' + (info.ready ? ' on' : '');
+  G('albl').textContent = info.ready ? (info.loginid || 'Connected') : 'Not connected';
+  G('abal').textContent = info.ready && info.balance != null
+    ? `${info.currency} ${Number(info.balance).toFixed(2)}` : '';
+  G('aid').textContent = info.loginid || '';
+}
+
+async function doConnect() {
+  const t = G('tinp').value.trim(); if (!t) return;
+  const btn = G('bcn'); btn.disabled = true; btn.textContent = 'Connecting…';
+  try {
+    const r = await POST('/api/token', { token: t });
+    G('tinp').value = '';
+    if (r.error) { alert(r.error); return; }
+    showAcct(r);
+  } finally { btn.disabled = false; btn.textContent = 'Connect'; }
+}
+
+// ── sidebar ───────────────────────────────────────────────────────────────────
+function buildSidebar(snaps) {
+  const list = G('slist'); list.innerHTML = '';
+  snaps.forEach((s, i) => {
+    state[s.id] = s;
+    const el = document.createElement('div');
+    el.className = 'si' + (cur === s.id ? ' active' : '');
+    el.id = 'si_' + s.id;
+    el.onclick = () => pick(s.id);
+    el.innerHTML = siHTML(s, i);
+    list.appendChild(el);
+  });
+}
+
+function siHTML(s, i) {
+  const pl  = s.stats.profit;
+  const wr  = s.stats.trades ? Math.round(s.stats.wins / s.stats.trades * 100) : 0;
+  const plT = pl !== 0 ? (pl > 0 ? '+' : '') + '$' + Math.abs(pl).toFixed(2) : '';
+  const plC = pl > 0 ? 'cg' : pl < 0 ? 'cr' : 'cm';
+  return `
+    <div class="sinum${s.running ? ' on' : ''}">${i + 1}</div>
+    <div class="simeta">
+      <div class="sisym">${s.cfg?.symbol || '—'}</div>
+      <div class="sisub">L${s.cfg?.logic || 1} &middot; ${s.stats.trades} trades &middot; ${wr}% WR</div>
+    </div>
+    <div class="siright">
+      <div class="sdot${s.running ? ' on' : ''}"></div>
+      <div class="spl ${plC}">${plT}</div>
+    </div>`;
+}
+
+function patchSidebar(id) {
+  const s = state[id]; if (!s) return;
+  const el = G('si_' + id); if (!el) return;
+  const idx = parseInt(id.replace('slot', ''));
+  el.innerHTML = siHTML(s, idx);
+  el.className = 'si' + (cur === id ? ' active' : '');
+  el.onclick = () => pick(id);
+}
+
+// ── select slot ───────────────────────────────────────────────────────────────
+async function pick(id) {
+  cur = id; tLogic = null; tMode = null; tFilter = null;
+  document.querySelectorAll('.si').forEach(e => e.classList.remove('active'));
+  const si = G('si_' + id); if (si) si.classList.add('active');
+  const idx = parseInt(id.replace('slot', ''));
+  const [snap, logs, hist] = await Promise.all([
+    GET(`/api/slot/${id}`),
+    GET(`/api/slot/${id}/logs`),
+    GET(`/api/slot/${id}/history`),
+  ]);
+  state[id] = snap;
+  drawDash(id, idx, snap, logs, hist);
+}
+
+// ── dashboard ─────────────────────────────────────────────────────────────────
+function drawDash(id, idx, snap, logs, hist) {
+  const cfg   = snap.cfg;
+  const stats = snap.stats;
+  const color = COLORS[idx] || '#A78BFA';
+  const logic = cfg.logic || 1;
+  const mode  = cfg.observe_mode || 'ticks';
+  const filt  = cfg.filter || 'none';
+
+  const wr  = stats.trades ? (stats.wins / stats.trades * 100).toFixed(1) : '0.0';
+  const pl  = stats.profit;
+  const plT = (pl >= 0 ? '+' : '') + '$' + Math.abs(pl).toFixed(2);
+  const plC = pl > 0 ? 'g' : pl < 0 ? 'r' : '';
+
+  const sOpts = syms.map(x =>
+    `<option value="${x.symbol}"${x.symbol === cfg.symbol ? ' selected' : ''}>${x.display_name}</option>`
+  ).join('') || `<option value="${cfg.symbol}">${cfg.symbol}</option>`;
+
+  G('main').innerHTML = `
+<div class="dash">
+
+  <div class="hdr">
+    <div class="hdr-num" style="background:${color}18;border:1px solid ${color}35;color:${color}">${idx + 1}</div>
+    <div class="hdr-info">
+      <div class="hdr-name" id="hName">${cfg.symbol}</div>
+      <div class="hdr-meta" id="hMeta">${metaLine(logic, mode, filt)}</div>
+    </div>
+    <span id="badge">${badgeHTML(snap)}</span>
+    <div class="hbtns">
+      <button class="btn-start" id="btnStart" style="background:${color}" onclick="doStart()" ${snap.running ? 'disabled' : ''}>▶ Start</button>
+      <button class="btn-stop"  id="btnStop"  onclick="doStop()" ${!snap.running ? 'disabled' : ''}>■ Stop</button>
+    </div>
+  </div>
+
+  <div class="sbar">
+    <div class="sc"><div class="sl">Trades</div><div class="sv"  id="sT">${stats.trades}</div></div>
+    <div class="sc"><div class="sl">Wins</div><div class="sv g" id="sW">${stats.wins}</div></div>
+    <div class="sc"><div class="sl">Losses</div><div class="sv r" id="sL">${stats.losses}</div></div>
+    <div class="sc"><div class="sl">Win Rate</div><div class="sv" id="sWR">${wr}%</div></div>
+    <div class="sc"><div class="sl">Total P / L</div><div class="sv ${plC}" id="sPL">${plT}</div></div>
+  </div>
+
+  <div class="cgrid">
+
+    <div class="setp">
+
+      <!-- LOGIC -->
+      <div class="ph">Logic</div>
+      <div class="pills" style="margin-bottom:10px">
+        ${[1,2,3].map(n => `
+          <div class="pill${logic === n ? ' on' : ''}" onclick="pickLogic(${n})">
+            <div>Logic ${n}</div>
+            <div class="pill-sub">${LOGIC_NAMES[n-1]}</div>
+          </div>`).join('')}
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- MARKET -->
+      <div class="ph">Market &amp; Observation</div>
+      <div class="f">
+        <label>Market</label>
+        <select id="fSym" onchange="syncMeta()">${sOpts}</select>
+      </div>
+      <div class="f">
+        <label>Observe Mode</label>
+        <div class="pills">
+          <div class="pill${mode === 'ticks' ? ' on' : ''}"   onclick="pickMode('ticks')">Ticks</div>
+          <div class="pill${mode === 'candles' ? ' on' : ''}" onclick="pickMode('candles')">M1 Candles</div>
+        </div>
+      </div>
+      <div class="row2" style="margin-bottom:10px">
+        <div class="f" style="margin-bottom:0">
+          <label id="obsLbl">${mode === 'candles' ? 'Candles' : 'Ticks'} to Observe</label>
+          <input type="number" id="fObs" value="${cfg.observe_count}" min="2">
+        </div>
+        <div class="f" style="margin-bottom:0">
+          <label>Reaction Range</label>
+          <input type="number" id="fRR" value="${cfg.reaction_range}" step="0.01" min="0.01">
+        </div>
+      </div>
+
+      <!-- confirm — hidden for Logic 1 -->
+      <div class="f" id="confRow" style="${logic === 1 ? 'display:none' : ''}">
+        <label id="confLbl">${mode === 'candles' ? 'Confirmation Candles' : 'Confirmation Ticks'} back (0 = instant)</label>
+        <input type="number" id="fConf" value="${cfg.confirm_count}" min="0">
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- TRADE -->
+      <div class="ph">Trade</div>
+      <div class="f">
+        <label>Stake (USD)</label>
+        <input type="number" id="fStake" value="${cfg.stake}" step="0.01" min="0.35">
+      </div>
+      <div class="f">
+        <label>Duration</label>
+        <div class="row3">
+          <input type="number" id="fDV" value="${cfg.duration_value}" min="1">
+          <select id="fDU">
+            <option value="t" ${cfg.duration_unit === 't' ? 'selected' : ''}>Ticks</option>
+            <option value="s" ${cfg.duration_unit === 's' ? 'selected' : ''}>Seconds</option>
+            <option value="m" ${cfg.duration_unit === 'm' ? 'selected' : ''}>Minutes</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2" style="margin-bottom:10px">
+        <div class="f" style="margin-bottom:0">
+          <label id="b1lbl">${logic === 1 ? 'Barrier 1 (upper)' : 'Barrier at HIGH'}</label>
+          <input type="text" id="fB1" value="${cfg.barrier1}">
+        </div>
+        <div class="f" style="margin-bottom:0">
+          <label id="b2lbl">${logic === 1 ? 'Barrier 2 (lower)' : 'Barrier at LOW'}</label>
+          <input type="text" id="fB2" value="${cfg.barrier2}">
+        </div>
+      </div>
+      <!-- contract type — Logic 3 only -->
+      <div class="f" id="ctRow" style="${logic !== 3 ? 'display:none' : ''}">
+        <label>Contract Type</label>
+        <select id="fCT">
+          <option value="CALL"     ${cfg.contract_type === 'CALL'     ? 'selected' : ''}>Rise</option>
+          <option value="PUT"      ${cfg.contract_type === 'PUT'      ? 'selected' : ''}>Fall</option>
+          <option value="ONETOUCH" ${cfg.contract_type === 'ONETOUCH' ? 'selected' : ''}>One Touch</option>
+          <option value="NOTOUCH"  ${cfg.contract_type === 'NOTOUCH'  ? 'selected' : ''}>No Touch</option>
+          <option value="CALL_HIGH">Higher</option>
+          <option value="PUT_LOW">Lower</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>Rest After Trade (seconds)</label>
+        <input type="number" id="fRest" value="${cfg.rest_seconds}" min="0">
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- FILTER -->
+      <div class="ph">Entry Filter</div>
+      <div class="pills" style="margin-bottom:0" id="fpills">
+        <div class="fpill${filt === 'none' ? ' fn' : ''}"     onclick="pickFilter('none')"><div>None</div><div class="pill-sub">No filter</div></div>
+        <div class="fpill${filt === 'momentum' ? ' fm' : ''}" onclick="pickFilter('momentum')"><div>⚡ Momentum</div><div class="pill-sub">Instant check</div></div>
+        <div class="fpill${filt === 'trend' ? ' ft' : ''}"    onclick="pickFilter('trend')"><div>📈 Trend</div><div class="pill-sub">M1 candle scan</div></div>
+      </div>
+      <div id="fSub">${filterSubHTML(filt, cfg)}</div>
+
+      <button class="btn-save" onclick="doSave()" style="background:${color}">Save Settings</button>
+      <div class="smsg" id="smsg" style="opacity:0"></div>
+
+    </div>
+
+    <div class="logp">
+      <div class="ph">Live Log</div>
+      <div class="logbox" id="logBox">${logs.slice(-150).map(leHTML).join('')}</div>
+    </div>
+
+    <div class="histp">
+      <div class="histhdr">Trade History</div>
+      <div id="histWrap">
+        ${hist.length
+          ? `<table><thead><tr><th>Time</th><th>Symbol</th><th>Contract</th><th>Barrier</th><th>Stake</th><th>Result</th><th>P / L</th></tr></thead><tbody id="histBody">${hist.map(hrHTML).join('')}</tbody></table>`
+          : `<div class="emp">No trades yet</div>`}
+      </div>
+    </div>
+
+  </div>
+</div>`;
+
+  const lb = G('logBox'); if (lb) lb.scrollTop = lb.scrollHeight;
+}
+
+// ── filter sub HTML ───────────────────────────────────────────────────────────
+function filterSubHTML(filt, cfg) {
+  if (filt === 'momentum') return `
+    <div class="fbox">
+      <div class="fbox-title m">⚡ Momentum Settings</div>
+      <div class="row2">
+        <div class="f" style="margin-bottom:0"><label id="mCLbl">Ticks / Candles to check</label><input type="number" id="fMC" value="${cfg.momentum_candles}" min="1" max="10"></div>
+        <div class="f" style="margin-bottom:0"><label>Body multiplier</label><input type="number" id="fMB" value="${cfg.momentum_body_mult}" step="0.1" min="0"></div>
+      </div>
+    </div>`;
+  if (filt === 'trend') return `
+    <div class="fbox">
+      <div class="fbox-title t">📈 Trend Settings</div>
+      <div class="row2" style="margin-bottom:8px">
+        <div class="f" style="margin-bottom:0"><label>M1 Candles to check</label><input type="number" id="fTC" value="${cfg.trend_candles}" min="3" max="20"></div>
+        <div class="f" style="margin-bottom:0"><label>Min body size</label><input type="number" id="fTB" value="${cfg.min_body_size}" step="0.01" min="0.01"></div>
+      </div>
+      <div class="row2">
+        <div class="f" style="margin-bottom:0"><label>Max overlap (0–1)</label><input type="number" id="fTO" value="${cfg.max_overlap}" step="0.05" min="0" max="1"></div>
+        <div class="f" style="margin-bottom:0"><label>Min consec. candles</label><input type="number" id="fTD" value="${cfg.min_dir_candles}" min="2" max="10"></div>
+      </div>
+    </div>`;
+  return '';
+}
+
+// ── pickers ───────────────────────────────────────────────────────────────────
+function pickLogic(n) {
+  tLogic = n;
+  G('main').querySelectorAll('.pills .pill').forEach((e, i) => e.classList.toggle('on', i === n - 1));
+  const cr = G('confRow'); if (cr) cr.style.display = n === 1 ? 'none' : '';
+  const ct = G('ctRow');   if (ct) ct.style.display = n === 3 ? '' : 'none';
+  const b1 = G('b1lbl'), b2 = G('b2lbl');
+  if (b1) b1.textContent = n === 1 ? 'Barrier 1 (upper)' : 'Barrier at HIGH';
+  if (b2) b2.textContent = n === 1 ? 'Barrier 2 (lower)' : 'Barrier at LOW';
+  syncMeta();
+}
+
+function pickMode(mode) {
+  tMode = mode;
+  const [tick, candle] = G('main').querySelectorAll('.pills .pill + .pill, .pills .pill');
+  G('main').querySelectorAll('.f .pills .pill').forEach((e, i) => {
+    e.classList.toggle('on', (i === 0 && mode === 'ticks') || (i === 1 && mode === 'candles'));
+  });
+  const ol = G('obsLbl');  if (ol) ol.textContent = (mode === 'candles' ? 'Candles' : 'Ticks') + ' to Observe';
+  const cl = G('confLbl'); if (cl) cl.textContent = (mode === 'candles' ? 'Confirmation Candles' : 'Confirmation Ticks') + ' back (0 = instant)';
+  syncMeta();
+}
+
+function pickFilter(f) {
+  tFilter = f;
+  const pills = G('fpills').querySelectorAll('.fpill');
+  pills.forEach(p => p.className = 'fpill');
+  const idx = f === 'none' ? 0 : f === 'momentum' ? 1 : 2;
+  if (pills[idx]) pills[idx].className = 'fpill ' + (f === 'none' ? 'fn' : f === 'momentum' ? 'fm' : 'ft');
+  const cfg = state[cur]?.cfg || {};
+  G('fSub').innerHTML = filterSubHTML(f, cfg);
+  syncMeta();
+}
+
+function syncMeta() {
+  const sym    = gv('fSym') || '';
+  const logic  = tLogic  || state[cur]?.cfg?.logic  || 1;
+  const mode   = tMode   || state[cur]?.cfg?.observe_mode || 'ticks';
+  const filter = tFilter || state[cur]?.cfg?.filter || 'none';
+  const hn = G('hName'); if (hn && sym) hn.textContent = sym;
+  const hm = G('hMeta'); if (hm) hm.textContent = metaLine(logic, mode, filter);
+  if (sym && cur) {
+    const si = G('si_' + cur); if (si) { const ss = si.querySelector('.sisym'); if (ss) ss.textContent = sym; }
+  }
+}
+
+function metaLine(logic, mode, filter) {
+  return `Logic ${logic}: ${LOGIC_NAMES[logic - 1]} · ${mode === 'candles' ? 'M1 Candles' : 'Ticks'} · Filter: ${filter}`;
+}
+
+// ── save ──────────────────────────────────────────────────────────────────────
+async function doSave() {
+  if (!cur) return;
+  const logic  = tLogic  || state[cur]?.cfg?.logic  || 1;
+  const mode   = tMode   || state[cur]?.cfg?.observe_mode || 'ticks';
+  const filter = tFilter || state[cur]?.cfg?.filter || 'none';
+  const cfg = {
+    symbol:             gv('fSym'),
+    logic,
+    observe_mode:       mode,
+    observe_count:      Number(gv('fObs')),
+    reaction_range:     parseFloat(gv('fRR') || 0.3),
+    confirm_count:      Number(gv('fConf') || 0),
+    stake:              Number(gv('fStake')),
+    duration_value:     Number(gv('fDV')),
+    duration_unit:      gv('fDU') || 't',
+    barrier1:           (gv('fB1') || '').trim(),
+    barrier2:           (gv('fB2') || '').trim(),
+    contract_type:      gv('fCT') || 'ONETOUCH',
+    rest_seconds:       Number(gv('fRest')),
+    filter,
+    momentum_candles:   Number(gv('fMC') || 3),
+    momentum_body_mult: parseFloat(gv('fMB') || 1),
+    trend_candles:      Number(gv('fTC') || 5),
+    min_body_size:      parseFloat(gv('fTB') || 0.05),
+    max_overlap:        parseFloat(gv('fTO') || 0.5),
+    min_dir_candles:    Number(gv('fTD') || 3),
+  };
+  await POST(`/api/slot/${cur}/cfg`, cfg);
+  if (state[cur]) state[cur].cfg = { ...state[cur].cfg, ...cfg };
+  tLogic = null; tMode = null; tFilter = null;
+  const m = G('smsg');
+  if (m) { m.textContent = 'Saved ✓'; m.style.opacity = '1'; setTimeout(() => m.style.opacity = '0', 2000); }
+}
+
+// ── start / stop ──────────────────────────────────────────────────────────────
+async function doStart() {
+  if (!cur) return;
+  const btn = G('btnStart'); if (btn) { btn.disabled = true; btn.textContent = 'Starting…'; }
+  const r = await POST(`/api/slot/${cur}/start`);
+  if (r.error) { alert(r.error); if (btn) { btn.disabled = false; btn.textContent = '▶ Start'; } }
+}
+
+async function doStop()    { if (cur) await POST(`/api/slot/${cur}/stop`); }
+async function doStopAll() { if (confirm('Stop all running markets?')) await POST('/api/stopall'); }
+
+// ── stats update ──────────────────────────────────────────────────────────────
+function updateStats(stats, snap) {
+  if (!stats) return;
+  const wr  = stats.trades ? (stats.wins / stats.trades * 100).toFixed(1) : '0.0';
+  const pl  = stats.profit;
+  const plT = (pl >= 0 ? '+' : '') + '$' + Math.abs(pl).toFixed(2);
+  const plC = pl > 0 ? 'g' : pl < 0 ? 'r' : '';
+  st('sT', stats.trades); st('sW', stats.wins); st('sL', stats.losses); st('sWR', wr + '%');
+  const pe = G('sPL'); if (pe) { pe.textContent = plT; pe.className = 'sv ' + plC; }
+  if (snap) {
+    const b = G('badge'); if (b) b.innerHTML = badgeHTML(snap);
+    const bs = G('btnStart'); if (bs) bs.disabled = snap.running;
+    const ss = G('btnStop');  if (ss) ss.disabled = !snap.running;
+  }
+}
+
+function badgeHTML(snap) {
+  if (!snap.running) return `<span class="badge stp">Stopped</span>`;
+  if (snap.warmup > 0) return `<span class="badge warm">● Warming up (${snap.warmup})</span>`;
+  if (snap.busy || snap.phase === 'trading') return `<span class="badge trd">● In Trade</span>`;
+  if (snap.phase === 'confirming') return `<span class="badge con">● Confirming</span>`;
+  return `<span class="badge mon">● Monitoring</span>`;
+}
+
+// ── log / history helpers ─────────────────────────────────────────────────────
+function leHTML(e) {
+  const ts = new Date(e.time).toLocaleTimeString();
+  const c  = e.level === 'win' ? 'win' : e.level === 'loss' ? 'loss' : e.level === 'err' ? 'err' : e.level === 'ok' ? 'ok' : '';
+  return `<div class="le ${c}"><span class="ts">${ts}</span>${esc(e.msg)}</div>`;
+}
+
+function hrHTML(h) {
+  const ts = new Date(h.time).toLocaleTimeString();
+  const p  = Number(h.profit);
+  return `<tr><td>${ts}</td><td>${h.symbol}</td><td>${h.type}</td><td>${h.barrier ?? '—'}</td><td>$${Number(h.stake).toFixed(2)}</td><td class="${h.won ? 'tw' : 'tl'}">${h.won ? 'WIN' : 'LOSS'}</td><td class="${p >= 0 ? 'tw' : 'tl'}">${p >= 0 ? '+' : ''}$${Math.abs(p).toFixed(2)}</td></tr>`;
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function appendLog(e) {
+  const lb = G('logBox'); if (!lb) return;
+  const d  = document.createElement('div'); d.innerHTML = leHTML(e);
+  lb.appendChild(d.firstChild); lb.scrollTop = lb.scrollHeight;
+}
+
+function prependHist(h) {
+  let body = G('histBody');
+  if (!body) {
+    G('histWrap').innerHTML = `<table><thead><tr><th>Time</th><th>Symbol</th><th>Contract</th><th>Barrier</th><th>Stake</th><th>Result</th><th>P / L</th></tr></thead><tbody id="histBody">${hrHTML(h)}</tbody></table>`;
+    return;
+  }
+  const t = document.createElement('tbody'); t.innerHTML = hrHTML(h);
+  body.insertBefore(t.firstChild, body.firstChild);
+}
+
+// ── SSE ───────────────────────────────────────────────────────────────────────
+function connectSSE() {
+  const es = new EventSource('/api/stream');
+  es.onmessage = e => { try { handle(JSON.parse(e.data)); } catch {} };
+  es.onerror   = () => { es.close(); setTimeout(connectSSE, 3000); };
+}
+
+function handle(d) {
+  switch (d.type) {
+    case 'init':
+      showAcct(d.account);
+      buildSidebar(d.slots);
+      break;
+    case 'account':
+      showAcct(d.data);
+      break;
+    case 'state':
+      if (!state[d.slotId]) state[d.slotId] = {};
+      Object.assign(state[d.slotId], d.data);
+      patchSidebar(d.slotId);
+      if (d.slotId === cur) updateStats(d.data.stats, state[d.slotId]);
+      break;
+    case 'log':
+      if (d.slotId === cur) appendLog(d.entry);
+      break;
+    case 'trade':
+      if (d.slotId === cur) {
+        updateStats(state[cur]?.stats, null);
+        prependHist(d.data);
+      }
+      break;
+  }
+}
+
+// ── utils ─────────────────────────────────────────────────────────────────────
+const G   = id => document.getElementById(id);
+const gv  = id => { const e = G(id); return e ? e.value : null; };
+const st  = (id, v) => { const e = G(id); if (e) e.textContent = v; };
+const GET  = url => fetch(url).then(r => r.json());
+const POST = (url, body) => fetch(url, {
+  method: 'POST', headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body || {})
+}).then(r => r.json());
+
+async function loadSymbols() {
+  try { const d = await GET('/api/symbols'); if (Array.isArray(d)) syms = d; } catch {}
+}
+
+(async function init() {
+  await loadSymbols();
+  connectSSE();
+})();
+</script>
+</body>
+</html>
